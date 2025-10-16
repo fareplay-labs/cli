@@ -1,0 +1,219 @@
+# Create a new Fly.io app
+mutation CreateApp($input: CreateAppInput!) {
+  createApp(input: $input) {
+    app {
+      id
+      name
+      organization {
+        id
+        slug
+      }
+      status
+      hostname
+      deployed
+      platformVersion
+    }
+  }
+}
+
+# Attach Postgres to app (Note: Postgres cluster must already exist)
+mutation AttachPostgres($input: AttachPostgresClusterInput!) {
+  attachPostgresCluster(input: $input) {
+    app {
+      id
+      name
+    }
+    connectionString
+    environmentVariableName
+    postgresClusterApp {
+      id
+      name
+    }
+  }
+}
+
+# Detach Postgres from app
+mutation DetachPostgres($input: DetachPostgresClusterInput!) {
+  detachPostgresCluster(input: $input) {
+    app {
+      id
+      name
+    }
+    postgresClusterApp {
+      id
+      name
+    }
+  }
+}
+
+# Create a database in a Postgres cluster
+mutation CreatePostgresDatabase($input: CreatePostgresClusterDatabaseInput!) {
+  createPostgresClusterDatabase(input: $input) {
+    database {
+      name
+      users
+    }
+    postgresClusterRole {
+      name
+      databases {
+        name
+        users
+      }
+    }
+  }
+}
+
+# Create a user in a Postgres cluster
+mutation CreatePostgresUser($input: CreatePostgresClusterUserInput!) {
+  createPostgresClusterUser(input: $input) {
+    user {
+      username
+      databases
+      isSuperuser
+    }
+    postgresClusterRole {
+      name
+      users {
+        username
+        databases
+        isSuperuser
+      }
+    }
+  }
+}
+
+# Grant user access to a database
+mutation GrantPostgresUserAccess($input: GrantPostgresClusterUserAccessInput!) {
+  grantPostgresClusterUserAccess(input: $input) {
+    user {
+      username
+      databases
+      isSuperuser
+    }
+    database {
+      name
+      users
+    }
+    postgresClusterRole {
+      name
+    }
+  }
+}
+
+# Query Postgres attachments
+query GetPostgresAttachments($postgresAppName: String!) {
+  postgresAttachments(postgresAppName: $postgresAppName) {
+    nodes {
+      id
+      databaseName
+      databaseUser
+      environmentVariableName
+    }
+  }
+}
+
+# Set secrets
+mutation SetSecrets($input: SetSecretsInput!) {
+  setSecrets(input: $input) {
+    app {
+      id
+      name
+    }
+    release {
+      id
+      version
+      reason
+      status
+    }
+  }
+}
+
+# Get app status
+query GetApp($name: String!) {
+  app(name: $name) {
+    id
+    name
+    hostname
+    deployed
+    status
+    organization {
+      id
+      slug
+    }
+    currentRelease {
+      id
+      version
+      status
+      reason
+    }
+    machines {
+      nodes {
+        id
+        name
+        state
+        region
+        createdAt
+      }
+    }
+    role {
+      name
+    }
+  }
+}
+
+# Get current user
+query GetCurrentUser {
+  viewer {
+    organizations {
+      nodes {
+        id
+        slug
+        name
+        type
+      }
+    }
+  }
+}
+
+# Deploy app
+mutation DeployImage($input: DeployImageInput!) {
+  deployImage(input: $input) {
+    release {
+      id
+      version
+      reason
+      description
+      status
+      inProgress
+    }
+  }
+}
+
+# Create Redis add-on
+mutation CreateRedis($input: CreateAddOnInput!) {
+  createAddOn(input: $input) {
+    addOn {
+      id
+      name
+      primaryRegion
+      publicUrl
+      status
+      environment
+    }
+  }
+}
+
+# Create Tigris object storage
+mutation CreateTigris($input: CreateAddOnInput!) {
+  createAddOn(input: $input) {
+    addOn {
+      id
+      name
+      primaryRegion
+      publicUrl
+      status
+      environment
+    }
+  }
+}
+

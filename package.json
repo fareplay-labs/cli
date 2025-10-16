@@ -1,0 +1,59 @@
+{
+  "name": "fare-terminal",
+  "version": "0.1.0",
+  "description": "Command-line installer and deployment tool for Fare Protocol custom casinos on Solana",
+  "main": "dist/index.js",
+  "bin": {
+    "fare": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc && npm run copy-assets",
+    "copy-assets": "mkdir -p dist/assets && cp -r src/assets/* dist/assets/",
+    "dev": "ts-node src/index.ts",
+    "start": "node dist/index.js",
+    "watch": "tsc --watch",
+    "prepare": "npm run build",
+    "codegen": "FLY_API_TOKEN=$(fly auth token | head -n1) graphql-codegen --config codegen.yml"
+  },
+  "keywords": [
+    "solana",
+    "casino",
+    "fare-protocol",
+    "deployment",
+    "cli"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "boxen": "^5.1.2",
+    "chalk": "^4.1.2",
+    "cli-spinners": "^2.9.2",
+    "commander": "^11.1.0",
+    "dotenv": "^16.3.1",
+    "figlet": "^1.7.0",
+    "gradient-string": "^2.0.2",
+    "graphql": "^16.11.0",
+    "graphql-request": "^7.3.0",
+    "inquirer": "^8.2.6",
+    "listr2": "^7.0.2",
+    "ora": "^5.4.1",
+    "simple-git": "^3.21.0",
+    "terminal-kit": "^3.1.2"
+  },
+  "devDependencies": {
+    "@graphql-codegen/cli": "^6.0.0",
+    "@graphql-codegen/typescript": "^5.0.2",
+    "@graphql-codegen/typescript-graphql-request": "^6.3.0",
+    "@graphql-codegen/typescript-operations": "^5.0.2",
+    "@types/figlet": "^1.5.8",
+    "@types/gradient-string": "^1.1.5",
+    "@types/inquirer": "^9.0.7",
+    "@types/node": "^20.10.5",
+    "@types/terminal-kit": "^2.5.7",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
