@@ -1,6 +1,8 @@
 import inquirer from 'inquirer';
 import crypto from 'crypto';
 import chalk from 'chalk';
+import { Keypair } from '@solana/web3.js';
+import bs58 from 'bs58';
 import { CasinoConfig } from '../types';
 
 /**
@@ -8,6 +10,17 @@ import { CasinoConfig } from '../types';
  */
 function generateJwtSecret(): string {
   return crypto.randomBytes(32).toString('hex');
+}
+
+/**
+ * Generate a Solana keypair for heartbeat service
+ */
+function generateHeartbeatKeypair(): { publicKey: string; privateKey: string } {
+  const keypair = Keypair.generate();
+  return {
+    publicKey: keypair.publicKey.toBase58(),
+    privateKey: bs58.encode(keypair.secretKey),
+  };
 }
 
 /**
@@ -39,6 +52,23 @@ export async function runConfigWizard(casinoName: string): Promise<CasinoConfig>
           return 'Please enter a valid Solana wallet address (base58 encoded, 32-44 characters)';
         }
         return true;
+      },
+    },
+    {
+      type: 'input',
+      name: 'frontendUrl',
+      message: 'Casino frontend URL (e.g., https://my-casino.com):',
+      default: (answers: any) => `https://fare-${casinoName}.vercel.app`,
+      validate: (input: string) => {
+        if (!input.trim()) {
+          return 'Frontend URL is required';
+        }
+        try {
+          new URL(input.trim());
+          return true;
+        } catch {
+          return 'Please enter a valid URL';
+        }
       },
     },
     {
@@ -111,21 +141,29 @@ export async function runConfigWizard(casinoName: string): Promise<CasinoConfig>
   // Generate or use provided JWT secret
   const jwtSecret = answers.autoGenerateJwt ? generateJwtSecret() : answers.jwtSecret;
 
+  // Auto-generate heartbeat keypair for discovery service
+  console.log(chalk.cyan('\n🔑 Generating heartbeat keypair for discovery service...'));
+  const heartbeatKeypair = generateHeartbeatKeypair();
+  console.log(chalk.green(`✓ Heartbeat keypair generated: ${heartbeatKeypair.publicKey}`));
+
   const config: CasinoConfig = {
     casinoName,
     ownerWallet: answers.ownerWallet.trim(),
     jwtSecret,
     solanaRpcUrl,
+    heartbeatPrivateKey: heartbeatKeypair.privateKey,
+    frontendUrl: answers.frontendUrl.trim(),
   };
 
   // Display configuration summary
   console.log(chalk.green('\n✓ Configuration complete!\n'));
   console.log(chalk.cyan('Summary:'));
   console.log(chalk.gray('─'.repeat(50)));
-  console.log(`Casino Name:    ${chalk.white(config.casinoName)}`);
-  console.log(`Owner Wallet:   ${chalk.white(config.ownerWallet)}`);
-  console.log(`Solana RPC:     ${chalk.white(config.solanaRpcUrl)}`);
-  console.log(`JWT Secret:     ${chalk.white(jwtSecret.substring(0, 8) + '...')}`);
+  console.log(`Casino Name:      ${chalk.white(config.casinoName)}`);
+  console.log(`Owner Wallet:     ${chalk.white(config.ownerWallet)}`);
+  console.log(`Heartbeat Key:    ${chalk.white(heartbeatKeypair.publicKey)}`);
+  console.log(`Solana RPC:       ${chalk.white(config.solanaRpcUrl)}`);
+  console.log(`JWT Secret:       ${chalk.white(jwtSecret.substring(0, 8) + '...')}`);
   console.log(chalk.gray('─'.repeat(50)));
 
   const { confirmConfig } = await inquirer.prompt([

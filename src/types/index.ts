@@ -3,6 +3,8 @@ export interface CasinoConfig {
   ownerWallet: string;
   jwtSecret: string;
   solanaRpcUrl: string;
+  heartbeatPrivateKey: string;
+  frontendUrl: string;
   postgresUrl?: string;
   redisUrl?: string;
   tigrisBucket?: string;

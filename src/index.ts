@@ -7,6 +7,7 @@ import { deployCommand } from './commands/deploy';
 import { statusCommand } from './commands/status';
 import { logsCommand } from './commands/logs';
 import { cleanupCommand } from './commands/cleanup';
+import { keygenCommand } from './commands/keygen';
 
 const program = new Command();
 
@@ -70,6 +71,20 @@ program
   .action(async (options) => {
     try {
       await cleanupCommand(options);
+    } catch (error) {
+      console.error(chalk.red('Error:'), error instanceof Error ? error.message : error);
+      process.exit(1);
+    }
+  });
+
+program
+  .command('keygen')
+  .description('Generate a new Solana keypair for casino configuration')
+  .option('-o, --output <format>', 'Output format: env, json, or both')
+  .option('-l, --label <label>', 'Label for the keypair (e.g., heartbeat, owner)')
+  .action(async (options) => {
+    try {
+      await keygenCommand(options);
     } catch (error) {
       console.error(chalk.red('Error:'), error instanceof Error ? error.message : error);
       process.exit(1);

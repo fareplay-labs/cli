@@ -252,8 +252,11 @@ export async function initCommand(casinoName: string): Promise<void> {
       task: async (ctx) => {
         const secrets = {
           CASINO_NAME: ctx.config.casinoName,
+          FRONTEND_URL: ctx.config.frontendUrl,
           OWNER_WALLET: ctx.config.ownerWallet,
+          SOLANA_OWNER_ADDRESS: ctx.config.ownerWallet,
           SOLANA_RPC_URL: ctx.config.solanaRpcUrl,
+          HEARTBEAT_PRIVATE_KEY: ctx.config.heartbeatPrivateKey,
           JWT_SECRET: ctx.config.jwtSecret,
           DATABASE_URL: ctx.config.postgresUrl!,
           REDIS_URL: ctx.config.redisUrl!,

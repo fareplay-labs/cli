@@ -58,10 +58,15 @@ export async function generateEnvFile(
 
 # Casino Information
 CASINO_NAME=${config.casinoName}
+FRONTEND_URL=${config.frontendUrl}
 
 # Solana Configuration
 SOLANA_RPC_URL=${config.solanaRpcUrl}
+SOLANA_OWNER_ADDRESS=${config.ownerWallet}
 CASINO_OWNER_WALLET=${config.ownerWallet}
+
+# Discovery Service Heartbeat
+HEARTBEAT_PRIVATE_KEY=${config.heartbeatPrivateKey}
 
 # Security
 JWT_SECRET=${config.jwtSecret}
